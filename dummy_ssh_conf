@@ -1,0 +1,13 @@
+Host project1
+    User depoly
+    HostName github.com
+    IdentityFile ~/.ssh/project1.key
+
+Host project2
+    User deploy
+    HostName github.com
+    IdentityFile ~/.ssh/project2.key
+
+Host project3
+    User deploy
+    IdentityFile ~/.ssh/project3.key
