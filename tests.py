@@ -1,5 +1,4 @@
 import unittest
-import cadre
 from io import StringIO
 
 good_config = u'''
@@ -19,7 +18,11 @@ Host project3
 '''
 
 class TestCadre(unittest.TestCase):
+    def test_import(self):
+        import cadre
+
     def test_get_config_hosts(self):
+        import cadre
         hosts = cadre._get_config_hosts(StringIO(good_config))
         self.assertEqual(
             set(('project1', 'project2', 'project3')),
