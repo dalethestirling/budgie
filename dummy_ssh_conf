@@ -1,5 +1,5 @@
 Host project1
-    User depoly
+    User deploy
     HostName github.com
     IdentityFile ~/.ssh/project1.key
 

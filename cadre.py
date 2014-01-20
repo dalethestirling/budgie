@@ -1,6 +1,7 @@
 #! /bin/env python
 
 # cadre.py - pythonic remote control of servers via ssh
+#  by Dale Stirling and Darren Wurf
 # Module loading code from sh.py, by Andrew Moffat (used under MIT license)
 
 from types import ModuleType
@@ -24,12 +25,18 @@ def _get_config_hosts(ssh_config):
     # Regex to collect Host definitions from ssh config
     host_regex = re.compile('^Host( |=| = )([A-Za-z0-9-_]+)$')
 
-    # Here the file is validated and Host names are extracted from teh ssh config
-    if not os.path.isfile(ssh_config):
-        raise SSHConfigError("SSH Config file %s is not found" % ssh_config)
-    with file(ssh_config) as ssh_read:
-        host_array = [host_regex.match(line).group(2) for line in ssh_read if host_regex.match(line)]
-
+    # Here the file is validated and Host names are extracted from the ssh config
+    parser = lambda iter:[host_regex.match(line).group(2) 
+            for line in iter 
+            if host_regex.match(line)]
+    if not hasattr(ssh_config, 'read'):
+        if os.path.isfile(ssh_config):
+            with file(ssh_config) as ssh_read:
+                host_array = parser(ssh_read)
+        else:
+            raise SSHConfigError("SSH Config file %s is not found" % ssh_config)
+    else:
+        host_array = parser(ssh_config)
     return host_array
 
 def _is_config_host(ssh_host):
