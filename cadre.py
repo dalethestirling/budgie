@@ -10,54 +10,14 @@ import sys
 import re 
 import sh
 
-##### Set defaults #####
-global __ssh_config__
-__ssh_config__ = os.path.expanduser("~/.ssh/config")
 
 ##### Exceptions #####
-
 class SSHConfigError(Exception): pass
+class SSHError(Exception): pass
 
 
-##### Helpers #####
-def _get_config_hosts(ssh_config):
-    '''Collects the configured hosts from ssh config file'''
-    # Regex to collect Host definitions from ssh config
-    host_regex = re.compile('^Host( |=| = )([A-Za-z0-9-_]+)$')
 
-    # Here the file is validated and Host names are extracted from the ssh config
-    parser = lambda iter:[host_regex.match(line).group(2) 
-            for line in iter 
-            if host_regex.match(line)]
-    if not hasattr(ssh_config, 'read'):
-        if os.path.isfile(ssh_config):
-            with file(ssh_config) as ssh_read:
-                host_array = parser(ssh_read)
-        else:
-            raise SSHConfigError("SSH Config file %s is not found" % ssh_config)
-    else:
-        host_array = parser(ssh_config)
-    return host_array
-
-def _is_config_host(ssh_host):
-    '''Checks that host exists in the ssh config of the current user'''
-   
-    if not ssh_host in __ssh_hosts__:
-        raise SSHConfigError('HOST %s not defined in %s' % (ssh_host, __ssh_config__))
-
-
-##### Module Class/Methids #####
-def set_ssh_config(new_ssh_config):
-    '''Updates the zsh_config path and gets hosts from config'''        
-    try:
-        global __ssh_hosts__
-        __ssh_hosts__ = _get_config_hosts(new_ssh_config)
-    except SSHConfigError as e:
-        raise e
-    else:
-        global __ssh_config__
-        __ssh_config__ = new_ssh_config
-
+##### Module Class/Methods #####
 
 class ssh(sh.Command):
     # TODO
@@ -67,9 +27,25 @@ class ssh(sh.Command):
     # ssh-agent support
     # Arbitrary config file
     # Detect and report when server fingerprint is unknown
-    def __init__(self):
-        return super(ssh, self).__init__('ssh')
 
+    def __init__(self, host=None):
+        ssh_cmd = super(ssh, self).__init__('ssh')
+
+        # If a host is supplied then we add the host into the sh.Command class
+        # instance at class initiation.
+        if host:
+            # Manually bake the host into the ssh command
+            self._partial = True
+            self._partial_baked_args.append(host)
+            return ssh_cmd
+        else:
+            # Return generic ssh command instance
+            return ssh_cmd
+
+    def __call__(self, *args, **kwargs):
+        super(ssh, self).__call__(args, kwargs)
+        
+            
 
 # this is a thin wrapper around THIS module (we patch sys.modules[__name__]).
 # this is in the case that the user does a "from bomdiggity import whatever"
@@ -82,7 +58,7 @@ class SelfWrapper(ModuleType):
         # but it seems to be the only way to make reload() behave
         # nicely.  if i make these attributes dynamic lookups in
         # __getattr__, reload sometimes chokes in weird ways...
-        for attr in ["__builtins__", "__doc__", "__name__", "__package__", "set_ssh_config", "_is_config_host", "_get_config_hosts"]:
+        for attr in ["__builtins__", "__doc__", "__name__", "__package__", "ssh"]:
             setattr(self, attr, getattr(self_module, attr, None))
 
         # python 3.2 (2.7 and 3.3 work fine) breaks on osx (not ubuntu)
@@ -90,22 +66,13 @@ class SelfWrapper(ModuleType):
         self.__path__ = []
         self.self_module = self_module
 
-    def __getattr__(self, name):
-        # First we validate if the host had been defined in the specified ssh conf
-        # If not defined a SSHConfigError exception is raised.
-        _is_config_host(name)
-
+    def __getattr__(self, name):    
         # Here we bake the defined ssh host to the ssh() command
-        return ssh().bake(name)
+        return ssh(name)
 
 # Setup default ssh_hosts.
 # This ignores the exception and creates an empty ssh_config list as the 
 # location of the ssh config file may need to be updated using set_ssh_config()
-global __ssh_hosts__
-try:
-    __ssh_hosts__ = _get_config_hosts(__ssh_config__)
-except SSHConfigError:
-    __ssh_hosts__ = []
 
 # And away we go 
 self = sys.modules[__name__]
