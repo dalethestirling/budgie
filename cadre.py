@@ -1,13 +1,11 @@
 #! /bin/env python
 
 # cadre.py - pythonic remote control of servers via ssh
-#  by Dale Stirling and Darren Wurf
+#  by Dale Stirling (@puredistortion) and Darren Wurf (@dwurf)
 # Module loading code from sh.py, by Andrew Moffat (used under MIT license)
 
 from types import ModuleType
-import os.path 
 import sys
-import re 
 import sh
 
 
@@ -20,13 +18,11 @@ class SSHError(Exception): pass
 ##### Module Class/Methods #####
 
 class ssh(sh.Command):
-    # TODO
-    # Disallow ssh.__call__()
-    # Fix obscure errors when server is unknown
-    # Detect and report when ssh keys aren't in place
-    # ssh-agent support
-    # Arbitrary config file
-    # Detect and report when server fingerprint is unknown
+    # TODO: Fix obscure errors when server is unknown
+    # TODO: Detect and report when ssh keys aren't in place
+    # TODO: ssh-agent support
+    # TODO: Arbitrary config file
+    # TODO: Detect and report when server fingerprint is unknown
 
     def __init__(self, host=None):
         ssh_cmd = super(ssh, self).__init__('ssh')
@@ -43,7 +39,7 @@ class ssh(sh.Command):
             return ssh_cmd
 
     def __call__(self, *args, **kwargs):
-        super(ssh, self).__call__(args, kwargs)
+        raise NotImplementedError('''Call command eg. cadre.host.cmd(param)''')
         
             
 
