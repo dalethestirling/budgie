@@ -53,6 +53,16 @@ Now you can run remote commands using simple python code
         from cadre import localhost
         print localhost.hostname(), localhost.uptime()
         localhost.touch('/tmp/latest')
-        
+
+Running Tests
+-------------
+
+Tests do not currently run correctly in Travis as above but you can test commit against current commit
+
+        import os
+        os.environ['TESTHOST1'] = <host configured in ~/.ssh/config>
+        os.environ['SSHUSR1'] = <username of configured host>
+
+        python tests.py
 
 
