@@ -22,7 +22,10 @@ class TestCadre(unittest.TestCase):
         print os.environ['USER']
         print str(cadre.ssh('localhost').whoami()).strip('\n')
         
-        self.assertEqual(str(cadre.ssh('localhost').whoami()).strip('\n'), os.environ['USER'])
+        self.assertEqual(
+            str(cadre.ssh('-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no localhost').whoami()).strip('\n'), 
+                os.environ['USER']
+            )
 
 if __name__ == '__main__':
 
