@@ -13,18 +13,13 @@ class TestCadre(unittest.TestCase):
         '''Test the __call__ that raises the NotImplementedError'''
         import cadre
         with self.assertRaises(NotImplementedError):
-            cadre.ssh(os.environ['TESTHOST1'])()
+            cadre.ssh(localhost)()
 
     def test_ssh_run_cmd(self):
         '''Test that a command can be executed on the remote host'''
         import cadre
-        self.assertEqual(str(cadre.ssh(os.environ['TESTHOST1']).whoami()).strip('\n'), os.environ['SSHUSR1'])
+        self.assertEqual(str(cadre.ssh(localhost).whoami()).strip('\n'), os.environ['USER'])
 
 if __name__ == '__main__':
-    # Setup environ vars 
-    if not os.environ.has_key('TESTHOST1'):
-        os.environ['TESTHOST1'] = 'svr'
-    if not os.environ.has_key('SSHUSR1'):
-        os.environ['SSHUSR1'] = 'dale'
 
     unittest.main()
