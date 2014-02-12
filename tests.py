@@ -17,9 +17,11 @@ class TestCadre(unittest.TestCase):
 
     def test_ssh_run_cmd(self):
         '''Test that a command can be executed on the remote host'''
-        print os.environ['USER']
-        print tr(cadre.ssh('localhost').whoami()).strip('\n')
         import cadre
+
+        print os.environ['USER']
+        print str(cadre.ssh('localhost').whoami()).strip('\n')
+        
         self.assertEqual(str(cadre.ssh('localhost').whoami()).strip('\n'), os.environ['USER'])
 
 if __name__ == '__main__':
