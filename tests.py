@@ -14,7 +14,7 @@ class TestCadre(unittest.TestCase):
         import cadre
         # with self.assertRaises(NotImplementedError):
         #     cadre.ssh('localhost')()
-        self.assertRaises(NotImplementedError,cadre.ssh('localhost')())
+        self.assertRaises(NotImplementedError,cadre.ssh('localhost'))
 
     def test_ssh_run_cmd(self):
         '''Test that a command can be executed on the remote host'''
