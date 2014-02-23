@@ -54,15 +54,40 @@ Now you can run remote commands using simple python code
         print localhost.hostname(), localhost.uptime()
         localhost.touch('/tmp/latest')
 
+You can also callhosts ing this alternate method if the magic above is to much
+
+        import cadre
+        print cadre.ssh('localhost'), cadre.ssh('localhost').uptime()
+        cadre.ssh('localhost').touch('/tmp/latest')
+
+
+Passing in SSH Options
+----------------------
+Cadre will allow the passing in of SSH options. Ath this time this is done through the bake method in the same way you would pass this into the sh.ssh()
+
+        cadre.localhost.bake('-o', 'UserKnownHostsFile=/dev/null', '-o',  'StrictHostKeyChecking=no').whoami()
+
+or 
+
+        cadre.ssh().bake('-o', 'UserKnownHostsFile=/dev/null', '-o',  'StrictHostKeyChecking=no', '127.0.0.1').whoami()
+
+This does need to be cleaned up to make more logical sense.  
+
 Running Tests
 -------------
 
-Tests do not currently run correctly in Travis as above but you can test commit against current commit
+`tests.py` can be called via the commandlime and is run on each commit through Travis CI
 
-        import os
-        os.environ['TESTHOST1'] = <host configured in ~/.ssh/config>
-        os.environ['SSHUSR1'] = <username of configured host>
+Tests can be called by running
 
         python tests.py
+
+This is the current test suite being applied to builds
+    *Import Test
+    *Direct Call Goes to Exception Test
+    *Command Execution (whoami) Test
+
+Command execution test uses SSH options that allow for the automatic generation of SSH keypairs and discarding them from known hosts at the conclusion of the connection.
+
 
 
