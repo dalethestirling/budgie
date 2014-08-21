@@ -7,11 +7,13 @@
 from types import ModuleType
 import sys
 import sh
+import functools
 
 
 ##### Exceptions #####
 class SSHConfigError(Exception): pass
 class SSHError(Exception): pass
+class SSHObjCreate(Exception): pass
 
 
 
@@ -24,7 +26,8 @@ class ssh(sh.Command):
     # TODO: Arbitrary config file
     # TODO: Detect and report when server fingerprint is unknown
 
-    def __init__(self, host=None):
+    def __init__(self, host=None):  
+        self._host = host
         ssh_cmd = super(ssh, self).__init__('ssh')
 
         # If a host is supplied then we add the host into the sh.Command class
@@ -41,7 +44,38 @@ class ssh(sh.Command):
     def __call__(self, *args, **kwargs):
         raise NotImplementedError('''Call command eg. cadre.host.cmd(param)''')
         
-            
+class HostGroup(dict):
+    def __init__(self, hosts=[]):
+        super(HostGroup, self).__init__()
+        self.add(hosts)
+
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError('''Call command eg. cadre.host.cmd(param)''')
+
+    def __getattr__(self, command):
+        return functools.partial(self.run, command)
+
+    def __build_host(self, host):
+        if isinstance(host, ssh):
+            return host._host, host
+        elif isinstance(host, str):
+            return host, ssh(host)
+        else:
+            raise SSHObjCreate('Host supplied to HostGroup could not be added')
+
+    def run(self, command, *args, **kwargs):
+        return{ host: getattr(self[host], command)(*args, **kwargs) for host in self }
+
+    def add(self, hosts):
+        host_dict = {}
+        if isinstance(hosts, list):
+            for host in hosts:
+                host_name, ssh_obj = self.__build_host(host)
+                host_dict[host_name] = ssh_obj
+        else:
+            host_name, ssh_obj = self.__build_host(hosts)
+            host_dict[host_name] = ssh_obj
+        self.update(host_dict)
 
 # this is a thin wrapper around THIS module (we patch sys.modules[__name__]).
 # this is in the case that the user does a "from bomdiggity import whatever"
@@ -54,7 +88,7 @@ class SelfWrapper(ModuleType):
         # but it seems to be the only way to make reload() behave
         # nicely.  if i make these attributes dynamic lookups in
         # __getattr__, reload sometimes chokes in weird ways...
-        for attr in ["__builtins__", "__doc__", "__name__", "__package__", "ssh"]:
+        for attr in ["__builtins__", "__doc__", "__name__", "__package__", "ssh", "HostGroup"]:
             setattr(self, attr, getattr(self_module, attr, None))
 
         # python 3.2 (2.7 and 3.3 work fine) breaks on osx (not ubuntu)

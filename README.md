@@ -63,7 +63,7 @@ You can also callhosts ing this alternate method if the magic above is to much
 
 Passing in SSH Options
 ----------------------
-Cadre will allow the passing in of SSH options. Ath this time this is done through the bake method in the same way you would pass this into the sh.ssh()
+Cadre will allow the passing in of SSH options. At this time this is done through the bake method in the same way you would pass this into the sh.ssh()
 
         cadre.localhost.bake('-o', 'UserKnownHostsFile=/dev/null', '-o',  'StrictHostKeyChecking=no').whoami()
 
@@ -73,10 +73,44 @@ or
 
 This does need to be cleaned up to make more logical sense.  
 
+Cadre Host Groups
+-----------------
+Cadre offers the ability to bundle ssh hosts for batch command execution. This is done through creating a host group. A host group will take in a list of host names or cadre.ssh instances.
+
+        web_servers = cadre.HostGroup()
+        web_servers.add('www1.example.com')
+        web_servers.add('www2.example.com')
+
+        webservers.add(['www1.example.com', 'www2.example.com'])
+
+        www1 = cadre.ssh('www1.example.com')
+        www2 = cadre.ssh('www2.example.com')
+        webservers.add([www1, www2])
+
+or
+
+        web_servers.HostGroup(['www1.example.com', 'www2.example.com'])
+
+        www1 = cadre.ssh('www1.example.com')
+        www2 = cadre.ssh('www2.example.com')
+        web_servers.HostGroup([www1, www2])
+
+Once a cadre.HostGroup() is created it can be intereacted with like a standard dictionary.
+
+Commands can be executed against the host group and results of execution will be supplied back as a dictionary
+
+        result = web_servers.whoami()
+
+Result would contain
+
+        {'www1': 'www1.example.com', 'www2': 'www2.example.com'}
+
+
+
 Running Tests
 -------------
 
-`tests.py` can be called via the commandlime and is run on each commit through Travis CI
+`tests.py` can be called via the commandlime and is run on each commit through Travis CIq
 
 Tests can be called by running
 
