@@ -4,8 +4,9 @@ python:
   - "2.6"
   - "2.7"
 
-hosts:
-  - localhost1
+addons:
+  hosts:
+    - localhost1
 
 before_script:
   # Allow us to SSH passwordless to localhost
