@@ -42,7 +42,33 @@ class ssh(sh.Command):
             return ssh_cmd
 
     def __call__(self, *args, **kwargs):
+        if len(self._partial_baked_args) > 1:
+            return super(ssh, self).__call__(args, kwargs)
         raise NotImplementedError('''Call command eg. cadre.host.cmd(param)''')
+
+    # reimplemented bake to enable hostgroups
+    def bake(self, *args, **kwargs):
+        fn = ssh()
+        fn._host = self._host
+        fn._partial = True
+
+        call_args, kwargs = self._extract_call_args(kwargs)
+
+        pruned_call_args = call_args
+        for k, v in ssh._call_args.items():
+            try:
+                if pruned_call_args[k] == v:
+                    del pruned_call_args[k]
+            except KeyError: continue
+
+        fn._partial_call_args.update(self._partial_call_args)
+        fn._partial_call_args.update(pruned_call_args)
+        fn._partial_baked_args.extend(self._partial_baked_args)
+        sep = pruned_call_args.get("long_sep", self._call_args["long_sep"])
+        fn._partial_baked_args.extend(self._compile_args(args, kwargs, sep))
+        return fn
+
+
         
 class HostGroup(dict):
     def __init__(self, hosts=[]):
@@ -50,7 +76,7 @@ class HostGroup(dict):
         self.add(hosts)
 
     def __call__(self, *args, **kwargs):
-        raise NotImplementedError('''Call command eg. cadre.host.cmd(param)''')
+       raise NotImplementedError('''Call command eg. cadre.host.cmd(param)''')
 
     def __getattr__(self, command):
         return functools.partial(self.run, command)

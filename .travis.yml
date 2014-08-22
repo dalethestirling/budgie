@@ -4,13 +4,14 @@ python:
   - "2.6"
   - "2.7"
 
+hosts:
+  - localhost1
+
 before_script:
   # Allow us to SSH passwordless to localhost
   - ssh-keygen -f ~/.ssh/id_rsa -N ""
   - cp ~/.ssh/{id_rsa.pub,authorized_keys}
   - cp ~/.ssh/{id_rsa.pub,authorized_keys2}
-  # Add localhost1 to the hosts file
-  - sed -i -e 's/localhost/localhost localhost1/g' /etc/hosts
 
 # command to install dependencies
 install: "pip install -r requirements.txt"

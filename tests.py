@@ -1,6 +1,12 @@
 import unittest
 import os
 
+def the_baker(ssh_obj):
+    return ssh_obj.bake(
+        '-o', 'UserKnownHostsFile=/dev/null', 
+        '-o', 'StrictHostKeyChecking=no' 
+        )
+
 
 class TestCadre(unittest.TestCase):
     '''Test case set to test cadre current build'''
@@ -20,24 +26,25 @@ class TestCadre(unittest.TestCase):
         '''Test that a command can be executed on the remote host'''
         import cadre
         
-        self.assertEqual(str(cadre.ssh().bake(
-            '-o', 'UserKnownHostsFile=/dev/null', '-o',  
-            'StrictHostKeyChecking=no', '127.0.0.1'
-        ).whoami()).strip('\n'), os.environ['USER'])
+        self.assertEqual(
+            str(the_baker(cadre.ssh('127.0.0.1')).whoami()).strip('\n'), 
+            os.environ['USER']
+        )
 
     def test_host_group_exists(self):
         import cadre
 
-        dummy_group = cadre.HostGroup(['localhost', 'localhost2'])
+        dummy_group = cadre.HostGroup(['localhost', 'localhost1'])
         self.assertTrue(dummy_group.has_key('localhost'))
         self.assertTrue(isinstance(dummy_group['localhost'], cadre.ssh))
 
     def test_host_group_add(self):
         import cadre
+        import tests
 
         dummy_group1 = cadre.HostGroup()
         dummy_group1.add('localhost')
-        localhost1 = cadre.ssh('localhost1')
+        localhost1 = tests.the_baker(cadre.ssh('localhost1'))
         dummy_group1.add(localhost1)
 
         self.assertTrue(dummy_group1.has_key('localhost'))
@@ -47,7 +54,7 @@ class TestCadre(unittest.TestCase):
         self.assertTrue(isinstance(dummy_group1['localhost1'], cadre.ssh))
 
         dummy_group2 = cadre.HostGroup()
-        localhost = cadre.ssh('localhost')
+        localhost = the_baker(cadre.ssh('localhost'))
         dummy_group2.add([localhost, localhost1])
 
         self.assertTrue(dummy_group2.has_key('localhost'))
@@ -59,14 +66,21 @@ class TestCadre(unittest.TestCase):
     def test_host_group_remove(self):
         import cadre
 
-        dummy_group = cadre.HostGroup(['localhost', 'localhost2'])
+        localhost = the_baker(cadre.ssh('localhost'))
+        localhost1 = the_baker(cadre.ssh('localhost1'))
+
+        dummy_group = cadre.HostGroup([localhost, localhost1])
         del dummy_group['localhost']
-        self.assertRaises(KeyError, dummy_group['localhost'])
+        with self.assertRaises(KeyError):
+            dummy_group['localhost']
 
     def test_host_group_run(self):
         import cadre
 
-        dummy_group = cadre.HostGroup(['localhost', 'localhost2'])
+        localhost = the_baker(cadre.ssh('localhost'))
+        localhost1 = the_baker(cadre.ssh('localhost1'))
+
+        dummy_group = cadre.HostGroup([localhost, localhost1])
         whoami_result = dummy_group.whoami()
         self.assertEqual(
             whoami_result['localhost'].strip('\n'), 
