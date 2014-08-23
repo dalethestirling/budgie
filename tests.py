@@ -1,5 +1,6 @@
 import unittest
 import os
+import sys
 
 def the_baker(ssh_obj):
     return ssh_obj.bake(
@@ -71,8 +72,14 @@ class TestCadre(unittest.TestCase):
 
         dummy_group = cadre.HostGroup([localhost, localhost1])
         del dummy_group['localhost']
-        with self.assertRaises(KeyError):
-            dummy_group['localhost']
+        if sys.version_info[:2] == (2,6):
+            try:
+                dummy_group['localhost']
+            except:
+                self.assertTrue(isinstance(sys.exc_info[0], KeyError))
+        else:
+            with self.assertRaises(KeyError):
+                dummy_group['localhost']
 
     def test_host_group_run(self):
         import cadre
