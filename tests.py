@@ -76,7 +76,7 @@ class TestCadre(unittest.TestCase):
             try:
                 dummy_group['localhost']
             except:
-                self.assertTrue(isinstance(sys.exc_info[0], KeyError))
+                self.assertTrue(isinstance(sys.exc_info()[1], KeyError))
         else:
             with self.assertRaises(KeyError):
                 dummy_group['localhost']
