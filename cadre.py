@@ -90,7 +90,10 @@ class HostGroup(dict):
             raise SSHObjCreate('Host supplied to HostGroup could not be added')
 
     def run(self, command, *args, **kwargs):
-        return { host: getattr(self[host], command)(*args, **kwargs) for host in self }
+        result_dict = {}
+        for host in self:
+            result_dict[host] = getattr(self[host], command)(*args, **kwargs)
+        return result_dict
 
     def add(self, hosts):
         host_dict = {}
