@@ -10,67 +10,67 @@ def the_baker(ssh_obj):
 
 
 class TestCadre(unittest.TestCase):
-    '''Test case set to test cadre current build'''
+    '''Test case set to test budgie current build'''
 
     def test_import(self):
-        '''Test the import of cadre python module'''
-        import cadre
+        '''Test the import of budgie python module'''
+        import budgie
 
     def test_ssh_call(self):
         '''Test the __call__ that raises the NotImplementedError'''
-        import cadre
+        import budgie
         # with self.assertRaises(NotImplementedError):
-        #     cadre.ssh('localhost')()
-        self.assertRaises(NotImplementedError,cadre.ssh('localhost'))
+        #     budgie.ssh('localhost')()
+        self.assertRaises(NotImplementedError,budgie.ssh('localhost'))
 
     def test_ssh_run_cmd(self):
         '''Test that a command can be executed on the remote host'''
-        import cadre
+        import budgie
         
         self.assertEqual(
-            str(the_baker(cadre.ssh('127.0.0.1')).whoami()).strip('\n'), 
+            str(the_baker(budgie.ssh('127.0.0.1')).whoami()).strip('\n'), 
             os.environ['USER']
         )
 
     def test_host_group_exists(self):
-        import cadre
+        import budgie
 
-        dummy_group = cadre.HostGroup(['localhost', 'localhost1'])
+        dummy_group = budgie.HostGroup(['localhost', 'localhost1'])
         self.assertTrue(dummy_group.has_key('localhost'))
-        self.assertTrue(isinstance(dummy_group['localhost'], cadre.ssh))
+        self.assertTrue(isinstance(dummy_group['localhost'], budgie.ssh))
 
     def test_host_group_add(self):
-        import cadre
+        import budgie
         import tests
 
-        dummy_group1 = cadre.HostGroup()
+        dummy_group1 = budgie.HostGroup()
         dummy_group1.add('localhost')
-        localhost1 = tests.the_baker(cadre.ssh('localhost1'))
+        localhost1 = tests.the_baker(budgie.ssh('localhost1'))
         dummy_group1.add(localhost1)
 
         self.assertTrue(dummy_group1.has_key('localhost'))
-        self.assertTrue(isinstance(dummy_group1['localhost'], cadre.ssh))
+        self.assertTrue(isinstance(dummy_group1['localhost'], budgie.ssh))
 
         self.assertTrue(dummy_group1.has_key('localhost1'))
-        self.assertTrue(isinstance(dummy_group1['localhost1'], cadre.ssh))
+        self.assertTrue(isinstance(dummy_group1['localhost1'], budgie.ssh))
 
-        dummy_group2 = cadre.HostGroup()
-        localhost = the_baker(cadre.ssh('localhost'))
+        dummy_group2 = budgie.HostGroup()
+        localhost = the_baker(budgie.ssh('localhost'))
         dummy_group2.add([localhost, localhost1])
 
         self.assertTrue(dummy_group2.has_key('localhost'))
-        self.assertTrue(isinstance(dummy_group2['localhost'], cadre.ssh))
+        self.assertTrue(isinstance(dummy_group2['localhost'], budgie.ssh))
 
         self.assertTrue(dummy_group2.has_key('localhost1'))
-        self.assertTrue(isinstance(dummy_group2['localhost1'], cadre.ssh))
+        self.assertTrue(isinstance(dummy_group2['localhost1'], budgie.ssh))
 
     def test_host_group_remove(self):
-        import cadre
+        import budgie
 
-        localhost = the_baker(cadre.ssh('localhost'))
-        localhost1 = the_baker(cadre.ssh('localhost1'))
+        localhost = the_baker(budgie.ssh('localhost'))
+        localhost1 = the_baker(budgie.ssh('localhost1'))
 
-        dummy_group = cadre.HostGroup([localhost, localhost1])
+        dummy_group = budgie.HostGroup([localhost, localhost1])
         del dummy_group['localhost']
         if sys.version_info[:2] == (2,6):
             try:
@@ -82,12 +82,12 @@ class TestCadre(unittest.TestCase):
                 dummy_group['localhost']
 
     def test_host_group_run(self):
-        import cadre
+        import budgie
 
-        localhost = the_baker(cadre.ssh('localhost'))
-        localhost1 = the_baker(cadre.ssh('localhost1'))
+        localhost = the_baker(budgie.ssh('localhost'))
+        localhost1 = the_baker(budgie.ssh('localhost1'))
 
-        dummy_group = cadre.HostGroup([localhost, localhost1])
+        dummy_group = budgie.HostGroup([localhost, localhost1])
         whoami_result = dummy_group.whoami()
         self.assertEqual(
             whoami_result['localhost'].strip('\n'), 
