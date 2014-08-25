@@ -33,6 +33,7 @@ class TestCadre(unittest.TestCase):
         )
 
     def test_host_group_exists(self):
+        '''Test that a HostGroup can be created'''
         import budgie
 
         dummy_group = budgie.HostGroup(['localhost', 'localhost1'])
@@ -40,6 +41,7 @@ class TestCadre(unittest.TestCase):
         self.assertTrue(isinstance(dummy_group['localhost'], budgie.ssh))
 
     def test_host_group_add(self):
+        '''Test that a host can be added to a HostGroup'''
         import budgie
         import tests
 
@@ -65,6 +67,7 @@ class TestCadre(unittest.TestCase):
         self.assertTrue(isinstance(dummy_group2['localhost1'], budgie.ssh))
 
     def test_host_group_remove(self):
+        '''Test that a host can be removed from HostGroup'''
         import budgie
 
         localhost = the_baker(budgie.ssh('localhost'))
@@ -82,6 +85,7 @@ class TestCadre(unittest.TestCase):
                 dummy_group['localhost']
 
     def test_host_group_run(self):
+        '''Test that a command can be run agains a hostgroup''' 
         import budgie
 
         localhost = the_baker(budgie.ssh('localhost'))
