@@ -1,7 +1,8 @@
-cadre
-=====
+budgie
+======
 
 [![Build Status](https://travis-ci.org/puredistortion/cadre.png?branch=master)](https://travis-ci.org/puredistortion/cadre)
+[![Build Status](https://travis-ci.org/puredistortion/budgie.png?branch=master)](https://travis-ci.org/puredistortion/budgie)
 
 A pythonic remote control of servers via ssh
 
@@ -12,7 +13,7 @@ Install the library
 
         virtualenv venv && . venv/bin/activate  # optional
         pip install sh
-        wget https://raw2.github.com/dwurf/cadre/master/cadre.py
+        wget https://raw2.github.com/puredistortion/budgie/master/budgie.py
 
 
 You need to configure passwordless SSH for your remote hosts:
@@ -50,52 +51,52 @@ Usage
 
 Now you can run remote commands using simple python code
 
-        from cadre import localhost
+        from budgie import localhost
         print localhost.hostname(), localhost.uptime()
         localhost.touch('/tmp/latest')
 
 You can also callhosts ing this alternate method if the magic above is to much
 
-        import cadre
-        print cadre.ssh('localhost'), cadre.ssh('localhost').uptime()
-        cadre.ssh('localhost').touch('/tmp/latest')
+        import budgie
+        print budgie.ssh('localhost'), budgie.ssh('localhost').uptime()
+        budgie.ssh('localhost').touch('/tmp/latest')
 
 
 Passing in SSH Options
 ----------------------
-Cadre will allow the passing in of SSH options. At this time this is done through the bake method in the same way you would pass this into the sh.ssh()
+budgie will allow the passing in of SSH options. At this time this is done through the bake method in the same way you would pass this into the sh.ssh()
 
-        cadre.localhost.bake('-o', 'UserKnownHostsFile=/dev/null', '-o',  'StrictHostKeyChecking=no').whoami()
+        budgie.localhost.bake('-o', 'UserKnownHostsFile=/dev/null', '-o',  'StrictHostKeyChecking=no').whoami()
 
 or 
 
-        cadre.ssh().bake('-o', 'UserKnownHostsFile=/dev/null', '-o',  'StrictHostKeyChecking=no', '127.0.0.1').whoami()
+        budgie.ssh().bake('-o', 'UserKnownHostsFile=/dev/null', '-o',  'StrictHostKeyChecking=no', '127.0.0.1').whoami()
 
 This does need to be cleaned up to make more logical sense.  
 
-Cadre Host Groups
+Budgie Host Groups
 -----------------
-Cadre offers the ability to bundle ssh hosts for batch command execution. This is done through creating a host group. A host group will take in a list of host names or cadre.ssh instances.
+budgie offers the ability to bundle ssh hosts for batch command execution. This is done through creating a host group. A host group will take in a list of host names or budgie.ssh instances.
 
-        web_servers = cadre.HostGroup()
+        web_servers = budgie.HostGroup()
         web_servers.add('www1.example.com')
         web_servers.add('www2.example.com')
 
         webservers.add(['www1.example.com', 'www2.example.com'])
 
-        www1 = cadre.ssh('www1.example.com')
-        www2 = cadre.ssh('www2.example.com')
+        www1 = budgie.ssh('www1.example.com')
+        www2 = budgie.ssh('www2.example.com')
         webservers.add([www1, www2])
 
 or
 
         web_servers.HostGroup(['www1.example.com', 'www2.example.com'])
 
-        www1 = cadre.ssh('www1.example.com')
-        www2 = cadre.ssh('www2.example.com')
+        www1 = budgie.ssh('www1.example.com')
+        www2 = budgie.ssh('www2.example.com')
         web_servers.HostGroup([www1, www2])
 
-Once a cadre.HostGroup() is created it can be intereacted with like a standard dictionary.
+Once a budgie.HostGroup() is created it can be intereacted with like a standard dictionary.
 
 Commands can be executed against the host group and results of execution will be supplied back as a dictionary
 
@@ -120,6 +121,9 @@ This is the current test suite being applied to builds
     *Import Test
     *Direct Call Goes to Exception Test
     *Command Execution (whoami) Test
+    *HostGroup Creation
+    *HostGroup Manipulation (add, remove)
+    *HostGroup Command Execution (whoami) Test
 
 Command execution test uses SSH options that allow for the automatic generation of SSH keypairs and discarding them from known hosts at the conclusion of the connection.
 
