@@ -74,6 +74,16 @@ or
 
 This does need to be cleaned up to make more logical sense.  
 
+Using Sudo
+----------
+Just as in sh sudo is just treated as another budgie command. 
+
+So executing a remote command is as simple as:
+
+        budgie.localhost.sudo.cat('/etc/hosts')
+
+You will need to ensure that sudo is either allowing the remote user you connect with to exec the command via /etc/sudoers
+
 Budgie Host Groups
 -----------------
 budgie offers the ability to bundle ssh hosts for batch command execution. This is done through creating a host group. A host group will take in a list of host names or budgie.ssh instances.
