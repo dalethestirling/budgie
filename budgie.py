@@ -1,6 +1,6 @@
 #! /bin/env python
 
-# cadre.py - pythonic remote control of servers via ssh
+# budgie.py - pythonic remote control of servers via ssh
 #  by Dale Stirling (@puredistortion) and Darren Wurf (@dwurf)
 # Module loading code from sh.py, by Andrew Moffat (used under MIT license)
 
@@ -76,7 +76,7 @@ class HostGroup(dict):
         self.add(hosts)
 
     def __call__(self, *args, **kwargs):
-       raise NotImplementedError('''Call command eg. cadre.host.cmd(param)''')
+       raise NotImplementedError('''Call command eg. budgie.HostGroup.cmd(param)''')
 
     def __getattr__(self, command):
         return functools.partial(self.run, command)
