@@ -43,7 +43,10 @@ class ssh(sh.Command):
 
     def __call__(self, *args, **kwargs):
         if len(self._partial_baked_args) > 1:
-            return super(ssh, self).__call__(args, kwargs)
+            if args:
+                return super(ssh, self).__call__(args, kwargs)
+            else:
+                return super(ssh, self).__call__(kwargs)
         raise NotImplementedError('''Call command eg. cadre.host.cmd(param)''')
 
     # reimplemented bake to enable hostgroups
