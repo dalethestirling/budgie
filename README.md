@@ -1,7 +1,6 @@
 budgie
 ======
     
-[![Build Status](https://travis-ci.org/puredistortion/cadre.png?branch=master)](https://travis-ci.org/puredistortion/cadre)
 [![Build Status](https://travis-ci.org/puredistortion/budgie.png?branch=master)](https://travis-ci.org/puredistortion/budgie)
 
 A pythonic remote control of servers via ssh
