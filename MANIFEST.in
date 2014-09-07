@@ -1,0 +1,3 @@
+include README.md tests.py
+
+global-exclude *.pyc
