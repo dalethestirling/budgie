@@ -9,6 +9,7 @@ import sys
 import sh
 import functools
 
+__version__ = "0.01"
 
 ##### Exceptions #####
 class SSHConfigError(Exception): pass
