@@ -2,6 +2,8 @@ budgie
 ======
     
 [![Build Status](https://travis-ci.org/puredistortion/budgie.png?branch=master)](https://travis-ci.org/puredistortion/budgie)
+[![PyPi version](https://pypip.in/v/budgie/badge.png)](https://crate.io/packages/budgie/)
+[![PyPi downloads](https://pypip.in/d/budgie/badge.png)](https://crate.io/packages/budgie/)
 
 A pythonic remote control of servers via ssh
 
@@ -11,9 +13,7 @@ Installation
 Install the library
 
         virtualenv venv && . venv/bin/activate  # optional
-        pip install sh
-        wget https://raw2.github.com/puredistortion/budgie/master/budgie.py
-
+        pip install budgie
 
 You need to configure passwordless SSH for your remote hosts:
 
